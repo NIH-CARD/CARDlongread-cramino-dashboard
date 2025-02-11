@@ -1,4 +1,4 @@
-# CARDlongread-cramino-dashboard
+# NIA CARD Long Read Cramino QC Parser and Dashboard Generator
 Tools to parse cramino QC output in bulk and generate an analytics dashboard from the bulk summary.
 ```
 usage: CARDlongread_cramino_parser.py [-h] [--cramino_dir CRAMINO_DIR] [--filelist FILELIST] [--output OUTPUT_FILE]
