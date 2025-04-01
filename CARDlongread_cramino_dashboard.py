@@ -206,7 +206,7 @@ elif grouped is True:
         # write data frames with a row between each
         # write combined summary stats
         start_row = 0
-        cramino_summary_statistics_df.to_excel(writer, startrow=start_row, index=False, sheet_name=i + ' summary statistics report')
+        cramino_summary_statistics_df.to_excel(writer, startrow=start_row, index=False, sheet_name=i + ' statistics')
     # close writer and save workbook AFTER for loop complete
     writer.close()
 # then add svg figures
