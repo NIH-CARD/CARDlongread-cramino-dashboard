@@ -1,5 +1,5 @@
 # NIA CARD Long Read Cramino QC Parser and Dashboard Generator
-Tools to parse cramino QC output in bulk and generate an analytics dashboard from the bulk summary.
+We often collect read mapping statistics for both small and large cohorts using the quality assessment tool cramino (https://github.com/wdecoster/cramino) in the NanoPack suite (https://github.com/wdecoster/nanopack). However, NanoPack lacks a tool that is useful for examining read mapping statistics in large numbers of samples, or between groups of samples. NanoPlot, for example, is best intended for comparing individual samples against each other. We thus developed a method to parse large numbers of cramino outputs at once, calculate descriptive statistics for each cramino measure (e.g., yield over 25 kb, N50), and generate swarm/violinplots of each property based on all samples. The two scripts below are used in sequence to parse cramino QC output in bulk and generate an analytics dashboard from the bulk summary.
 ```
 usage: CARDlongread_cramino_parser.py [-h] [--cramino_dir CRAMINO_DIR] [--filelist FILELIST] [--output OUTPUT_FILE]
 
@@ -13,13 +13,15 @@ optional arguments:
   --output OUTPUT_FILE  Output long read cramino report summary table in tab-delimited format
 ```
 ```
-usage: CARDlongread_cramino_dashboard.py [-h] [-input INPUT_FILE] [-output OUTPUT_FILE] [-plot_title PLOT_TITLE] [--plot_cutoff | --no-plot_cutoff] [-run_cutoff RUN_CUTOFF]
+usage: CARDlongread_cramino_dashboard.py [-h] [-input INPUT_FILE [INPUT_FILE ...]] [-names [NAMES ...]] [-output OUTPUT_FILE] [-plot_title PLOT_TITLE] [--plot_cutoff | --no-plot_cutoff] [-run_cutoff RUN_CUTOFF]
 
 This program gets summary statistics from long read sequencing report data.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -input INPUT_FILE     Input tab-delimited tsv file containing features extracted from long read sequencing reports.
+  -input INPUT_FILE [INPUT_FILE ...]
+                        Input tab-delimited tsv file containing features extracted from long read sequencing reports.
+  -names [NAMES ...]    Names corresponding to input tsv file(s); required if more than one tsv provided.
   -output OUTPUT_FILE   Output long read sequencing summary statistics XLSX
   -plot_title PLOT_TITLE
                         Title for each plot in output XLSX (optional)
