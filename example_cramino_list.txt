@@ -1,0 +1,15 @@
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_404_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_406_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_509_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_511_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_516_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_517_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_519_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_AM_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_AV_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_CH_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_GAV_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_IO_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_LO_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_OC_cramino_QC.txt
+/data/CARD_AUX/LRS_temp/CHILE/MAPPED_BAM/Chile_P01_cramino_QC.txt

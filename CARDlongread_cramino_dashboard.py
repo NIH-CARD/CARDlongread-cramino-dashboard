@@ -60,19 +60,32 @@ def make_summary_statistics_data_frame(input_data_frame, property_names):
     return summary_statistics_df
     
 # make violinplot/swarmplot figure worksheet in output workbook
-def make_violinswarmplot_worksheet(data,input_variable,workbook,worksheet_name,x_axis_title=None,cutoff=None,title=None):
+def make_violinswarmplot_worksheet(data,input_variable,group_variable,workbook,worksheet_name,x_axis_title=None,cutoff=None,title=None):
     # create worksheet for figure output
     worksheet=workbook.create_sheet(worksheet_name)
     # initialize raw data buffer for image
     imgdata=BytesIO()
     # initialize plot overall
     fig, ax = plt.subplots()
-    # make swarm plot to show how data points overlap with distribution
-    # replace color='black'
-    ax = sb.swarmplot(data=data,x=input_variable,color='black')
-    # add violin plot using seaborn (sb.violinplot)
-    # increase transparency to improve swarmplot visibility
-    ax = sb.violinplot(data=data,x=input_variable,color='white',ax=ax)
+    # set up plots differently depending on whether group variable is set
+    if (group_variable is None):
+        # make swarm plot to show how data points overlap with distribution
+        # replace color='black'
+        ax = sb.swarmplot(data=data,x=input_variable,color='black')
+        # add violin plot using seaborn (sb.violinplot)
+        # increase transparency to improve swarmplot visibility
+        # use boxplot since only one "group" shown
+        ax = sb.violinplot(data=data,x=input_variable,color='white',ax=ax)
+    else:
+        # make swarm plot to show how data points overlap with distribution
+        # input variable on y axis and group on x axis
+        # thus vertical swarm/violinplots instead of horizontal ones when no group specified
+        # replace color='black'
+        ax = sb.swarmplot(data=data,x=group_variable,y=input_variable,color='black')
+        # add violin plot using seaborn (sb.violinplot)
+        # increase transparency to improve swarmplot visibility
+        # include quartile lines in this context (for easily, visually comparing between groups)
+        ax = sb.violinplot(data=data,x=group_variable,y=input_variable,color='white',inner="quartile",ax=ax)
     # add x axis title if specified 
     if x_axis_title is not None:
         ax.set(xlabel=x_axis_title)
@@ -82,7 +95,12 @@ def make_violinswarmplot_worksheet(data,input_variable,workbook,worksheet_name,x
     # add red line for 90GB/30X cutoff or whatever necessary for specific plots
     # cutoff line defined by x value
     if cutoff is not None:
-        ax.axvline(x=cutoff,color='red')
+        # vertical line if non-grouped
+        if (group_variable is None):
+            ax.axvline(x=cutoff,color='red')
+        # horizontal line if grouped (group variable on x-axis)
+        else:
+            ax.axhline(y=cutoff,color='red')
     # put figure in variable to prep for saving into buffer
     # fig = swarmplot.get_figure()
     # save figure as 200 dpi PNG into buffer
@@ -102,7 +120,9 @@ def make_violinswarmplot_worksheet(data,input_variable,workbook,worksheet_name,x
 parser = argparse.ArgumentParser(description='This program gets summary statistics from long read sequencing report data.')
 
 # get input and output arguments
-parser.add_argument('-input', action="store", dest="input_file", help="Input tab-delimited tsv file containing features extracted from long read sequencing reports.")
+parser.add_argument('-input', action="store", dest="input_file", nargs="+", help="Input tab-delimited tsv file containing features extracted from long read sequencing reports.")
+# if multiple inputs, require input names
+parser.add_argument('-names', action="store", default=None, dest="names", nargs="*", help="Names corresponding to input tsv file(s); required if more than one tsv provided.")
 parser.add_argument('-output', action="store", dest="output_file", help="Output long read sequencing summary statistics XLSX")
 parser.add_argument('-plot_title', action="store", default=None, dest="plot_title", help="Title for each plot in output XLSX (optional)")
 # add boolean --plot_cutoff argument
@@ -116,13 +136,33 @@ results = parser.parse_args()
 # throw error if no input file provided
 if results.input_file is None:
 	quit('ERROR: No input file (-input) provided!')
+
+# throw error if no names provided if multiple input files provided
+if len(results.input_file)>1:
+    if len(results.names)<=1:
+        quit('ERROR: Multiple input files provided but not multiple names (-names).')
         
 # set default output filename
 if results.output_file is None:
     results.output_file='output_summary_statistics.xlsx'
-
+    
 # read tab delimited output into pandas data frame
-cramino_extract_initial=pd.read_csv(results.input_file,sep='\t')
+# case if just one input file provided
+if len(results.input_file)==1:
+    cramino_extract_initial=pd.read_csv(results.input_file[0],sep='\t')
+    grouped=False
+# what if multiple input files provided
+elif len(results.input_file)>1:
+    # store input tables in list as long input filename set
+    cramino_extract_initial_list=[0] * len(results.input_file)
+    for idx, i in enumerate(results.input_file): 
+        cramino_extract_initial_list[idx]=pd.read_csv(i,sep='\t')
+        # add group name to each table in list
+        cramino_extract_initial_list[idx]['Group']=results.names[idx]
+    # combine groups into single concatenated data table
+    cramino_extract_initial=pd.concat(cramino_extract_initial_list[:],ignore_index=True)
+    # set group variable
+    grouped=True
 
 # use functions above
 # first filter out low output runs
@@ -136,16 +176,39 @@ cramino_extract = cramino_extract_initial[cramino_extract_initial['Yield (Gb)'] 
 cramino_extract.reset_index(drop='True',inplace=True)
 # summary statistics on...
 cramino_summary_statistics_property_names=['Number of alignments','Percent of total reads','Yield (Gb)','Mean Coverage','Yield (Gb) [>25kb]','N50','N75','Median length','Mean length','Median identity','Mean identity','Median mapping Q score','Mean mapping Q score']
-# make data frame
-cramino_summary_statistics_df = make_summary_statistics_data_frame(cramino_extract, cramino_summary_statistics_property_names)
-# output data frames and figures to excel spreadsheet
-writer = pd.ExcelWriter(results.output_file)
-# write data frames with a row between each
-# write combined summary stats
-start_row = 0
-cramino_summary_statistics_df.to_excel(writer, startrow=start_row, index=False, sheet_name='Summary statistics report')
-# close writer and save workbook
-writer.close()
+if grouped is False:
+    # make data frame
+    cramino_summary_statistics_df = make_summary_statistics_data_frame(cramino_extract, cramino_summary_statistics_property_names)
+    # average median mapping Q score for plots below
+    # average_median_mapping_q_score = cramino_summary_statistics_df.loc['Median mapping Q score','Mean']
+    # average mean mapping Q score for plots below
+    # average_mean_mapping_q_score = cramino_summary_statistics_df.loc['Mean mapping Q score','Mean']
+    # output data frames and figures to excel spreadsheet
+    writer = pd.ExcelWriter(results.output_file)
+    # write data frames with a row between each
+    # write combined summary stats
+    start_row = 0
+    cramino_summary_statistics_df.to_excel(writer, startrow=start_row, index=False, sheet_name='Summary statistics report')
+    # close writer and save workbook
+    writer.close()
+elif grouped is True:
+    # output data frames and figures to excel spreadsheet
+    # intialize writer BEFORE for loop through results names
+    writer = pd.ExcelWriter(results.output_file)
+    # loop through all results names
+    for idx, i in enumerate(results.names):
+        # make data frame
+        cramino_summary_statistics_df = make_summary_statistics_data_frame(cramino_extract[cramino_extract['Group'] == i], cramino_summary_statistics_property_names)
+        # average median mapping Q score for plots below
+        # average_median_mapping_q_score = cramino_summary_statistics_df.loc['Median mapping Q score','Mean']
+        # average mean mapping Q score for plots below
+        # average_mean_mapping_q_score = cramino_summary_statistics_df.loc['Mean mapping Q score','Mean']
+        # write data frames with a row between each
+        # write combined summary stats
+        start_row = 0
+        cramino_summary_statistics_df.to_excel(writer, startrow=start_row, index=False, sheet_name=i + ' summary statistics report')
+    # close writer and save workbook AFTER for loop complete
+    writer.close()
 # then add svg figures
 # use openpyxl and pipe image data into new worksheets
 # append new worksheets to existing workbook
@@ -155,34 +218,26 @@ workbook = openpyxl.load_workbook(results.output_file)
 # if/else depending on whether -plot_cutoff set
 if results.plot_cutoff is True:
     # sequential violin/swarm plots for each property
-    make_violinswarmplot_worksheet(cramino_extract,"Number of alignments",workbook,'Number of alignments plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Percent of total reads",workbook,'Percent of total reads plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Yield (Gb)",workbook,'Yield plot',None,90,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean Coverage",workbook,'Mean coverage plot',None,30,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Yield (Gb) [>25kb]",workbook,'Yield over 25 kb plot',None,90,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"N50",workbook,'N50 plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"N75",workbook,'N85 plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Median length",workbook,'Median length plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean length",workbook,'Mean length plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Median identity",workbook,'Median identity plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean identity",workbook,'Mean identity plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Median mapping Q score",workbook,'Median mapping Q score plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean mapping Q score",workbook,'Mean mapping Q score plot',None,None,results.plot_title)
+    # simplify by iterating through for loop
+    cramino_plot_cutoff_array=[None,None,90,30,90,None,None,None,None,None,None,None,None]
+    cramino_plot_worksheet_names=['Number of alignments plot','Percent of total reads plot','Yield plot','Mean coverage plot','Yield over 25 kb plot','N50 plot','N75 plot','Median length plot','Mean length plot','Median identity plot','Mean identity plot','Median mapping Q score plot','Mean mapping Q score plot']
+    for idx, i in enumerate(cramino_summary_statistics_property_names):
+        # include group variable if necessary
+        if grouped is False:
+            make_violinswarmplot_worksheet(cramino_extract,i,None,workbook,cramino_plot_worksheet_names[idx],None,cramino_plot_cutoff_array[idx],results.plot_title)
+        elif grouped is True:
+            make_violinswarmplot_worksheet(cramino_extract,i,cramino_extract['Group'],workbook,cramino_plot_worksheet_names[idx],None,cramino_plot_cutoff_array[idx],results.plot_title)
 else:
     # sequential violin/swarm plots for each property
-    make_violinswarmplot_worksheet(cramino_extract,"Number of alignments",workbook,'Number of alignments plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Percent of total reads",workbook,'Percent of total reads plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Yield (Gb)",workbook,'Yield plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean Coverage",workbook,'Mean coverage plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Yield (Gb) [>25kb]",workbook,'Yield over 25 kb plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"N50",workbook,'N50 plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"N75",workbook,'N85 plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Median length",workbook,'Median length plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean length",workbook,'Mean length plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Median identity",workbook,'Median identity plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean identity",workbook,'Mean identity plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Median mapping Q score",workbook,'Median mapping Q score plot',None,None,results.plot_title)
-    make_violinswarmplot_worksheet(cramino_extract,"Mean mapping Q score",workbook,'Mean mapping Q score plot',None,None,results.plot_title)
+    # simplify by iterating through for loop
+    # no need for cutoff array this time
+    cramino_plot_worksheet_names=['Number of alignments plot','Percent of total reads plot','Yield plot','Mean coverage plot','Yield over 25 kb plot','N50 plot','N75 plot','Median length plot','Mean length plot','Median identity plot','Mean identity plot','Median mapping Q score plot','Mean mapping Q score plot']
+    for idx, i in enumerate(cramino_summary_statistics_property_names):
+        # include group variable if necessary
+        if grouped is False:
+            make_violinswarmplot_worksheet(cramino_extract,i,None,workbook,cramino_plot_worksheet_names[idx],None,None,results.plot_title)
+        elif grouped is True:
+            make_violinswarmplot_worksheet(cramino_extract,i,cramino_extract['Group'],workbook,cramino_plot_worksheet_names[idx],None,None,results.plot_title)
 # save workbook when done
 workbook.save(results.output_file)
 
