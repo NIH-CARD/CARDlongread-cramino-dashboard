@@ -14,6 +14,7 @@ optional arguments:
 ```
 ```
 usage: CARDlongread_cramino_dashboard.py [-h] [-input INPUT_FILE [INPUT_FILE ...]] [-names [NAMES ...]] [-output OUTPUT_FILE] [-plot_title PLOT_TITLE] [--plot_cutoff | --no-plot_cutoff] [-run_cutoff RUN_CUTOFF]
+                                         [--strip_plot | --no-strip_plot]
 
 This program gets summary statistics from long read sequencing report data.
 
@@ -29,4 +30,6 @@ optional arguments:
                         Include cutoff lines in violin plots (optional; default true; --no-plot_cutoff to override) (default: True)
   -run_cutoff RUN_CUTOFF
                         Minimum data output per flow cell run to include (optional, 1 Gb default)
+  --strip_plot, --no-strip_plot
+                        Show strip plots instead of swarm plots inside violin plots (optional; default false) (default: False)
 ```
