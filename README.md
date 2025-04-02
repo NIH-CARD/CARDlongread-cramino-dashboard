@@ -1,7 +1,24 @@
 # NIA CARD Long Read Cramino QC Parser and Dashboard Generator
 We often collect read mapping statistics for both small and large cohorts using the quality assessment tool cramino (https://github.com/wdecoster/cramino) in the NanoPack suite (https://github.com/wdecoster/nanopack). However, NanoPack lacks a tool that is useful for examining read mapping statistics of large numbers of samples, or between groups of samples. NanoPlot, for example, is best intended for comparing individual samples against each other. We thus developed a method to parse large numbers of cramino outputs at once, calculate descriptive statistics for each cramino measure (e.g., yield over 25 kb, N50), and generate swarm/violinplots of each property based on all samples. The two scripts below are used in sequence to parse cramino QC output in bulk and generate an analytics dashboard from the bulk summary.
 ## Dependencies
-To be added.
+The Python scripts were tested and developed with the following dependency modules (and respective versions where applicable):
+
+Python 3.10.8
+numpy 1.26.4
+pandas 2.0.3
+seaborn 0.12.2
+matplotlib 3.7.2
+json 2.0.9
+argparse 1.1
+dateutil 2.8.2
+openpyxl 3.1.2
+xlsxwriter 3.1.2
+datetime
+dateutil
+statistics
+dataclasses
+glob
+io
 ## Usage
 ```
 usage: CARDlongread_cramino_parser.py [-h] [--cramino_dir CRAMINO_DIR] [--filelist FILELIST] [--output OUTPUT_FILE]
