@@ -3,22 +3,22 @@ We often collect read mapping statistics for both small and large cohorts using 
 ## Dependencies
 The Python scripts were tested and developed with the following dependency modules (and respective versions where applicable):
 
-Python 3.10.8
-numpy 1.26.4
-pandas 2.0.3
-seaborn 0.12.2
-matplotlib 3.7.2
-json 2.0.9
-argparse 1.1
-dateutil 2.8.2
-openpyxl 3.1.2
-xlsxwriter 3.1.2
-datetime
-dateutil
-statistics
-dataclasses
-glob
-io
+Python 3.10.8  
+numpy 1.26.4  
+pandas 2.0.3  
+seaborn 0.12.2  
+matplotlib 3.7.2  
+json 2.0.9  
+argparse 1.1  
+dateutil 2.8.2  
+openpyxl 3.1.2  
+xlsxwriter 3.1.2  
+datetime  
+dateutil  
+statistics  
+dataclasses  
+glob  
+io  
 ## Usage
 ```
 usage: CARDlongread_cramino_parser.py [-h] [--cramino_dir CRAMINO_DIR] [--filelist FILELIST] [--output OUTPUT_FILE]
