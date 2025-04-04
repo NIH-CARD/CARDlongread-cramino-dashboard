@@ -34,7 +34,7 @@ optional arguments:
 ```
 ```
 usage: CARDlongread_cramino_dashboard.py [-h] [-input INPUT_FILE [INPUT_FILE ...]] [-names [NAMES ...]] [-output OUTPUT_FILE] [-plot_title PLOT_TITLE] [--plot_cutoff | --no-plot_cutoff] [-run_cutoff RUN_CUTOFF]
-                                         [--strip_plot | --no-strip_plot]
+                                         [--strip_plot | --no-strip_plot] [-colors [COLORS ...]] [-legend_colors [LEGEND_COLORS ...]] [-legend_labels [LEGEND_LABELS ...]] [--group_count | --no-group_count]
 
 This program gets summary statistics from long read sequencing report data.
 
@@ -52,6 +52,13 @@ optional arguments:
                         Minimum data output per flow cell run to include (optional, 1 Gb default)
   --strip_plot, --no-strip_plot
                         Show strip plots instead of swarm plots inside violin plots (optional; default false) (default: False)
+  -colors [COLORS ...]  Color palette corresponding to sequential groups displayed (e.g., 'blue', 'red', 'blue'); optional and used only if more than one tsv provided.
+  -legend_colors [LEGEND_COLORS ...]
+                        Colors shown in the legend (e.g., 'blue', 'red'); optional and used only if more color palette included above. Must be palette subset.
+  -legend_labels [LEGEND_LABELS ...]
+                        Labels for each color in legend in order specified in -legend_colors.
+  --group_count, --no-group_count
+                        Show group count in x-axis labels (optional; default false) (default: False)
 ```
 ## Tutorial
 To be added, though example data is included in the repository.
