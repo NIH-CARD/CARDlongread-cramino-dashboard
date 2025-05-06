@@ -62,3 +62,5 @@ optional arguments:
 ```
 ## Tutorial
 To be added, though example data is included in the repository.
+## Comparing QC metrics across groups
+As we described in the [raw QC report parser and dashboard repository](https://github.com/molleraj/CARDlongread-report-parser), it is often advantageous to compare cramino QC metrics across different groups of mapped and unmapped BAMs.
