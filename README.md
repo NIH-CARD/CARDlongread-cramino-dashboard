@@ -67,6 +67,11 @@ The commands provided below offer a quick start with a set of 15 cramino outputs
 git clone https://github.com/molleraj/CARDlongread-cramino-dashboard.git
 cd CARDlongread-cramino-dashboard
 
+# create summary table from list of cramino reports
+python CARDlongread_cramino_parser.py --filelist example_cramino_list.txt --output example_cramino_summary.tsv
+
+# create dashboard from cramino output
+python CARDlongread_cramino_dashboard.py -input example_cramino_summary.tsv -output example_cramino_dashboard.xlsx -plot_title "Chile tutorial example" 
 ```
 ## Comparing QC metrics across groups
 As we described in the [raw QC report parser and dashboard repository](https://github.com/molleraj/CARDlongread-report-parser), it is often advantageous to compare cramino QC metrics across different groups of mapped and unmapped BAMs.
