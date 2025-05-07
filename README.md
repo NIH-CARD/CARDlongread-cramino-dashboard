@@ -130,6 +130,7 @@ python CARDlongread_cramino_dashboard.py \
   --strip_plot
 ```
 Below are sample grouped violinplots with overlayed strip plots from the custom colored and default colored dashboards above, respectively.  
+
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/30eb1ec2-bf6f-4d65-add7-4367cba17e6f" />
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/7b5fea32-242f-4534-86e2-0d5d02c46874" />
 
