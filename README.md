@@ -79,7 +79,7 @@ python CARDlongread_cramino_dashboard.py -input example_cramino_summary.tsv -out
 ```
 Example alignment QC visualizations from tutorial summary spreadsheet:
 
-Mean reference (GRCh38) coverage violinplot with embedded boxplot and overlayed swarmplot:
+Mean reference (GRCh38) coverage violinplot with embedded boxplot and overlayed swarmplot (30x cutoff marked in red):
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/8101294d-28b3-4393-92e7-c5ce5aca7a4b" />  
 Alignment N50 violinplot with embedded boxplot and overlayed swarmplot:
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/4c8a85ee-8fdf-4a17-a43f-980786f14bba" />  
