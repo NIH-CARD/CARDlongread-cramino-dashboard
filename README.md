@@ -73,5 +73,16 @@ python CARDlongread_cramino_parser.py --filelist example_cramino_list.txt --outp
 # create dashboard from cramino output
 python CARDlongread_cramino_dashboard.py -input example_cramino_summary.tsv -output example_cramino_dashboard.xlsx -plot_title "Chile tutorial example" 
 ```
+Example alignment QC visualizations from tutorial summary spreadsheet:
+
+Reference (GRCh38) coverage violinplot with embedded boxplot and overlayed swarmplot:
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/8101294d-28b3-4393-92e7-c5ce5aca7a4b" />
+
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/4c8a85ee-8fdf-4a17-a43f-980786f14bba" />
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/af8c88ac-e4fb-4edb-99c1-743cd852de5f" />
+
 ## Comparing QC metrics across groups
 As we described in the [raw QC report parser and dashboard repository](https://github.com/molleraj/CARDlongread-report-parser), it is often advantageous to compare cramino QC metrics across different groups of mapped and unmapped BAMs.
+
+```bash
+```
