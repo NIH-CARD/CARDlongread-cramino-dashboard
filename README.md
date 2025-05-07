@@ -98,19 +98,19 @@ cd CARDlongread-report-parser
 # prepare input tables for each cohort
 # cohort json lists include 20 randomly selected JSONs per cohort
 # cohort 1
-python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_1_json_list.txt --output group_comparison/cohort_1_output.tsv
+python CARDlongread_cramino_parser.py --filelist group_comparison/cohort_1_json_list.txt --output group_comparison/cohort_1_output.tsv
 # cohort 2
-python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_2_json_list.txt --output group_comparison/cohort_2_output.tsv
+python CARDlongread_cramino_parser.py --filelist group_comparison/cohort_2_json_list.txt --output group_comparison/cohort_2_output.tsv
 # cohort 3
-python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_3_json_list.txt --output group_comparison/cohort_3_output.tsv
+python CARDlongread_cramino_parser.py --filelist group_comparison/cohort_3_json_list.txt --output group_comparison/cohort_3_output.tsv
 # cohort 4
-python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_4_json_list.txt --output group_comparison/cohort_4_output.tsv
+python CARDlongread_cramino_parser.py --filelist group_comparison/cohort_4_json_list.txt --output group_comparison/cohort_4_output.tsv
 # cohort 5
-python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_5_json_list.txt --output group_comparison/cohort_5_output.tsv
+python CARDlongread_cramino_parser.py --filelist group_comparison/cohort_5_json_list.txt --output group_comparison/cohort_5_output.tsv
 
 # make dashboard for all five cohorts, coloring cohorts by sample type (blood or brain)
 # overlay violinplots with strip plots instead of beeswarm plots
-python CARDlongread_cramino_parser.py \
+python CARDlongread_cramino_dashboard.py \
   -input group_comparison/cohort_1_output.tsv group_comparison/cohort_2_output.tsv group_comparison/cohort_3_output.tsv group_comparison/cohort_4_output.tsv group_comparison/cohort_5_output.tsv \
   -names "Cohort 1" "Cohort 2" "Cohort 3" "Cohort 4" "Cohort 5" \
   -colors "tab:blue" "tab:red" "tab:blue" "tab:blue" "tab:blue" \
