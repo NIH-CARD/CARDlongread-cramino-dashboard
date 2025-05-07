@@ -61,8 +61,7 @@ optional arguments:
                         Show group count in x-axis labels (optional; default false) (default: False)
 ```
 ## Tutorial
-To be added, though example data is included in the repository.
-To clone from GitHub and do a test run with example data, run the following commands:
+The commands provided below offer a quick start with a set of 15 cramino outputs from a small cohort (paths given are for outputs on NIH Biowulf HPC cluster). To clone from GitHub and do a test run with example data, run the following commands:
 ```bash
 # Download this repo
 git clone https://github.com/molleraj/CARDlongread-cramino-dashboard.git
