@@ -92,4 +92,40 @@ Median mapping Q score (quality score; -10 log (error rate)) violinplot with emb
 As we described in the [raw QC report parser and dashboard repository](https://github.com/molleraj/CARDlongread-report-parser), it is often advantageous to compare cramino QC metrics across different groups of mapped and unmapped BAMs. We thus implemented group comparison functionality available through the -input [INPUT_FILE ...], -names [NAMES ...], and/or -colors [COLORS ...] command line options. These options take a list of files along with corresponding names and colors to be applied to each input file, in the order given for the -input option. We have provided an additional tutorial below demonstrating group comparison with custom coloring and labeling for 20 sequencing runs randomly selected from each of five different cohorts. Cohorts are colored and labeled based on sample type (blood in red, brain in blue, colors from tableau palette). Cohorts are set in order to corresponding brain/blood colors with -colors, while the legend is set to blood/brain and red/blue with -legend_colors and -legend_labels, respectively. We also provide a command to generate a companion dashboard based on the same cohorts with default coloring. Paths provided in cramino output list files are paths to corresponding cramino outputs on the NIH Biowulf HPC cluster. Input and output files for the group comparison tutorial are provided in the provided group_comparison folder.
 
 ```bash
+# run in CARDlongread-report-parser directory
+cd CARDlongread-report-parser
+
+# prepare input tables for each cohort
+# cohort json lists include 20 randomly selected JSONs per cohort
+# cohort 1
+python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_1_json_list.txt --output group_comparison/cohort_1_output.tsv
+# cohort 2
+python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_2_json_list.txt --output group_comparison/cohort_2_output.tsv
+# cohort 3
+python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_3_json_list.txt --output group_comparison/cohort_3_output.tsv
+# cohort 4
+python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_4_json_list.txt --output group_comparison/cohort_4_output.tsv
+# cohort 5
+python CARDlongread_extract_from_json.py --filelist group_comparison/cohort_5_json_list.txt --output group_comparison/cohort_5_output.tsv
+
+# make dashboard for all five cohorts, coloring cohorts by sample type (blood or brain)
+# overlay violinplots with strip plots instead of beeswarm plots
+python CARDlongread_cramino_parser.py \
+  -input group_comparison/cohort_1_output.tsv group_comparison/cohort_2_output.tsv group_comparison/cohort_3_output.tsv group_comparison/cohort_4_output.tsv group_comparison/cohort_5_output.tsv \
+  -names "Cohort 1" "Cohort 2" "Cohort 3" "Cohort 4" "Cohort 5" \
+  -colors "tab:blue" "tab:red" "tab:blue" "tab:blue" "tab:blue" \
+  -legend_colors "tab:red" "tab:blue" \
+  -legend_labels "Blood" "Brain" \
+  -plot_title "Group comparison tutorial with custom colors and legend" \
+  -output group_comparison/five_cohort_sample_comparison_dashboard_custom_colors.xlsx \
+  --strip_plot
+
+# make dashboard as above, but don't use custom color/labeling options
+# instead use 'top up' colors for runs and seaborn defaults for output per flow cell/per experiment
+python CARDlongread_cramino_dashboard.py \
+  -input group_comparison/cohort_1_output.tsv group_comparison/cohort_2_output.tsv group_comparison/cohort_3_output.tsv group_comparison/cohort_4_output.tsv group_comparison/cohort_5_output.tsv \
+  -names "Cohort 1" "Cohort 2" "Cohort 3" "Cohort 4" "Cohort 5" \
+  -plot_title "Group comparison tutorial with default output" \
+  -output group_comparison/five_cohort_sample_comparison_dashboard_default_colors.xlsx \
+  --strip_plot
 ```
