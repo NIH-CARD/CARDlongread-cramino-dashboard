@@ -32,6 +32,10 @@ optional arguments:
   --filelist FILELIST   text file containing list of all cramino reports to parse
   --output OUTPUT_FILE  Output long read cramino report summary table in tab-delimited format
 ```
+Output fields of the parser-generated summary table include the following:
+
+Filename, Number of alignments, Percent of total reads, Yield (Gb), Mean Coverage, Yield (Gb) [>25kb], N50, N75, Median length, Mean length, Median identity, Mean identity, Median mapping Q score, Mean mapping Q score
+
 ```
 usage: CARDlongread_cramino_dashboard.py [-h] [-input INPUT_FILE [INPUT_FILE ...]] [-names [NAMES ...]] [-output OUTPUT_FILE] [-plot_title PLOT_TITLE] [--plot_cutoff | --no-plot_cutoff] [-run_cutoff RUN_CUTOFF]
                                          [--strip_plot | --no-strip_plot] [-colors [COLORS ...]] [-legend_colors [LEGEND_COLORS ...]] [-legend_labels [LEGEND_LABELS ...]] [--group_count | --no-group_count]
@@ -75,10 +79,11 @@ python CARDlongread_cramino_dashboard.py -input example_cramino_summary.tsv -out
 ```
 Example alignment QC visualizations from tutorial summary spreadsheet:
 
-Reference (GRCh38) coverage violinplot with embedded boxplot and overlayed swarmplot:
+Mean reference (GRCh38) coverage violinplot with embedded boxplot and overlayed swarmplot:
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/8101294d-28b3-4393-92e7-c5ce5aca7a4b" />
-
+Alignment N50 violinplot with embedded boxplot and overlayed swarmplot:
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/4c8a85ee-8fdf-4a17-a43f-980786f14bba" />
+Median mapping Q score (quality score; -10 log (error rate)) violinplot with embedded boxplot and overlayed swarmplot:
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/af8c88ac-e4fb-4edb-99c1-743cd852de5f" />
 
 ## Comparing QC metrics across groups
