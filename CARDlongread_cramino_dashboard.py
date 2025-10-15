@@ -135,6 +135,98 @@ def make_violinswarmplot_worksheet(data,input_variable,group_variable,legend_pat
     # close figure with matplotlib plt close
     plt.close()
 
+# add scatterplot worksheet generating function
+# single function for scatterplots with/without cutoffs
+
+def make_scatterplot_worksheet(data,group_variable,legend_patches,user_palette,strip_plot_set,workbook,worksheet_name,title=None,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,x_variable=None,y_variable=None,prop_point_size=False,size_column=None,has_date_time=False):
+    # create worksheet for figure output
+    worksheet=workbook.create_sheet(worksheet_name)
+    # initialize raw data buffer for image
+    imgdata=BytesIO()
+    # initialize plot overall
+    fig, ax = plt.subplots()
+    # make scatterplot of active pores vs. per flow cell data output
+    # include regression by using sb.regplot() function if show_reg_line=True
+    # had to remove regression to use hue keyword
+    # color points by topup/not topup run if show_run_colors is True
+    if show_run_colors is True and prop_point_size is False:
+        # show top up colors if no group variable included
+        if group_variable is None:
+            # rearranged_color_palette = [sb.color_palette()[0],'firebrick',sb.color_palette()[1],sb.color_palette()[4],sb.color_palette()[5]]
+            # ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,hue="Run type",hue_order=['Standard run','Interrupted','Top up','Reconnection','Recovery'],palette=rearranged_color_palette)
+            ax = sb.scatterplot(data=data,x=x_variable,y=y_variable)
+        # override top up colors if group variable included
+        else:
+            # default palette if no palette specified
+            if user_palette is None:
+                ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,hue=group_variable)
+            # otherwise use user specified palette
+            else:
+                ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,hue=group_variable,palette=user_palette)
+    # add point size if specified (prop_point_size is True)
+    # note use of data[size_column] as point size
+    elif show_run_colors is True and prop_point_size is True:
+        # ignore top up run colors for cramino dashboard
+        # show top up colors if no group variable included
+        if group_variable is None:
+            # rearranged_color_palette = [sb.color_palette()[0],'firebrick',sb.color_palette()[1],sb.color_palette()[4],sb.color_palette()[5]]
+            # ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,hue="Run type",hue_order=['Standard run','Interrupted','Top up','Reconnection','Recovery'],palette=rearranged_color_palette,size=data[size_column])
+            ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,size=data[size_column])
+        # override top up colors if no group variable included
+        else:
+            # default palette if no palette specified
+            if user_palette is None:
+                ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,hue=group_variable,size=data[size_column])
+            # otherwise use user specified palette
+            else:
+                ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,hue=group_variable,palette=user_palette,size=data[size_column])
+    elif show_run_colors is False and prop_point_size is False:
+        ax = sb.scatterplot(data=data,x=x_variable,y=y_variable)
+    # add point size if specified (prop_point_size is True)
+    elif show_run_colors is False and prop_point_size is True:
+        ax = sb.scatterplot(data=data,x=x_variable,y=y_variable,size=data[size_column])
+    # show regression line if specified (show_reg_line is True)
+    if show_reg_line is True and prop_point_size is False:
+        ax = sb.regplot(data=data,x=x_variable,y=y_variable)
+    # add point size if specified (prop_point_size is True)
+    elif show_reg_line is True and prop_point_size is True:
+        ax = sb.regplot(data=data,x=x_variable,y=y_variable,size=data[size_column])
+    # add title if specified
+    if title is not None:
+        ax.set_title(title)
+    # set minimum y and x to zero
+    # ax.set_xlim(left=0)
+    # ax.set_ylim(bottom=0)
+    if x_cutoffs is not None:
+        for idx, i in enumerate(x_cutoffs):
+            # add vertical x cutoffs sequentially
+            ax.axvline(x=i,color=x_cutoff_colors[idx])
+    if y_cutoffs is not None:
+        for idx, i in enumerate(y_cutoffs):
+            # add horizontal y cutoffs sequentially
+            ax.axhline(y=i,color=y_cutoff_colors[idx])
+    # add legend with colors if requested
+    if legend_patches is not None:
+        plt.legend(handles=legend_patches)
+    # handling datetime based x axis
+    if has_date_time is True:
+        ax.set_xlim(data[x_variable].min(),data[x_variable].max())
+        ax.tick_params(axis='x', rotation=45)
+    # put figure in variable to prep for saving into buffer
+    # fig = swarmplot.get_figure()
+    # save figure as 150 dpi PNG into buffer
+    fig.savefig(imgdata, format='png', dpi=150, bbox_inches='tight')
+    # close figure
+    fig.clf()
+    # make openpyxl image from raw data
+    img = openpyxl.drawing.image.Image(imgdata)
+    # set location of image in worksheet (A1)
+    img.anchor = 'A1'
+    # add image to worksheet
+    worksheet.add_image(img)
+    # close figure with matplotlib plt close
+    plt.close()
+
 # set up command line argument parser
 parser = argparse.ArgumentParser(description='This program gets summary statistics from long read sequencing report data.')
 
@@ -203,6 +295,9 @@ if len(results.input_file)==1:
     cramino_extract_initial=pd.read_csv(results.input_file[0],sep='\t')
     # first filter out low output runs
     cramino_extract = cramino_extract_initial[cramino_extract_initial['Yield (Gb)'] > results.run_cutoff]
+    # add N50 (kb) column
+    cramino_extract['N50 (kb)']=round(cramino_extract['N50']/1000,3)
+    # set grouped variable
     grouped=False
 # what if multiple input files provided
 elif len(results.input_file)>1:
@@ -224,6 +319,8 @@ elif len(results.input_file)>1:
             cramino_extract_initial_list[idx]['Group']=results.names[idx]
     # combine groups into single concatenated data table
     cramino_extract=pd.concat(cramino_extract_initial_list[:],ignore_index=True)
+    # add N50 (kb) column
+    cramino_extract['N50 (kb)']=round(cramino_extract['N50']/1000,3)
     # set group variable
     grouped=True
 
@@ -236,7 +333,7 @@ elif len(results.input_file)>1:
 # fix indices
 cramino_extract.reset_index(drop='True',inplace=True)
 # summary statistics on...
-cramino_summary_statistics_property_names=['Number of alignments','Percent of total reads','Yield (Gb)','Mean Coverage','Yield (Gb) [>25kb]','N50','N75','Median length','Mean length','Median identity','Mean identity','Median mapping Q score','Mean mapping Q score']
+cramino_summary_statistics_property_names=['Number of alignments','Percent of total reads','Yield (Gb)','Mean Coverage','Yield (Gb) [>25kb]','N50','N50 (kb)','N75','Median length','Mean length','Median identity','Mean identity','Median mapping Q score','Mean mapping Q score']
 if grouped is False:
     # make data frame
     cramino_summary_statistics_df = make_summary_statistics_data_frame(cramino_extract, cramino_summary_statistics_property_names)
@@ -275,37 +372,106 @@ elif grouped is True:
 # use openpyxl and pipe image data into new worksheets
 # append new worksheets to existing workbook
 workbook = openpyxl.load_workbook(results.output_file)
+# set variables for make_scatterplot_worksheet
+user_palette=results.colors
+strip_plot_set=results.strip_plot
 # use make_violinswarmplot_worksheet function to insert figures
 # plots that don't need cutoff included below to maintain order of spreadsheets (and order of figures)
 # if/else depending on whether -plot_cutoff set
 if results.plot_cutoff is True:
     # sequential violin/swarm plots for each property
     # simplify by iterating through for loop
-    cramino_plot_cutoff_array=[None,None,90,30,90,None,None,None,None,None,None,None,None]
-    cramino_plot_worksheet_names=['Number of alignments plot','Percent of total reads plot','Yield plot','Mean coverage plot','Yield over 25 kb plot','N50 plot','N75 plot','Median length plot','Mean length plot','Median identity plot','Mean identity plot','Median mapping Q score plot','Mean mapping Q score plot']
+    cramino_plot_cutoff_array=[None,None,90,30,90,None,None,None,None,None,None,None,None,None]
+    cramino_plot_worksheet_names=['Number of alignments plot','Percent of total reads plot','Yield plot','Mean coverage plot','Yield over 25 kb plot','N50 plot','N50 (kb) plot','N75 plot','Median length plot','Mean length plot','Median identity plot','Mean identity plot','Median mapping Q score plot','Mean mapping Q score plot']
     for idx, i in enumerate(cramino_summary_statistics_property_names):
         # include group variable if necessary
         if grouped is False:
+            group_variable=None
             make_violinswarmplot_worksheet(cramino_extract,i,None,legend_patches,results.colors,results.strip_plot,workbook,cramino_plot_worksheet_names[idx],None,cramino_plot_cutoff_array[idx],results.plot_title)
         elif grouped is True:
             if results.show_group_count is True:
+                group_variable='Group and count'
                 make_violinswarmplot_worksheet(cramino_extract,i,cramino_extract['Group and count'],legend_patches,results.colors,results.strip_plot,workbook,cramino_plot_worksheet_names[idx],None,cramino_plot_cutoff_array[idx],results.plot_title)
             else:
+                group_variable='Group'
                 make_violinswarmplot_worksheet(cramino_extract,i,cramino_extract['Group'],legend_patches,results.colors,results.strip_plot,workbook,cramino_plot_worksheet_names[idx],None,cramino_plot_cutoff_array[idx],results.plot_title)
+    # add scatterplots to match what Melissa suggested in RUSH cohort analysis
+    # median identity
+    # median identity vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. med. idy",title=results.plot_title,x_cutoffs=[90],x_cutoff_colors=['gray'],y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median identity',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # median identity vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. med. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median identity',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # median identity vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. med. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median identity',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+    # median (mapping) Q score
+    # median Q score vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. med. Q score",title=results.plot_title,x_cutoffs=[90],x_cutoff_colors=['gray'],y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median mapping Q score',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # median Q score vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. med. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median mapping Q score',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # median Q score vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. med. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median mapping Q score',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+    # mean identity
+    # mean identity vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. avg. idy",title=results.plot_title,x_cutoffs=[90],x_cutoff_colors=['gray'],y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean identity',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # mean identity vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. avg. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean identity',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # mean identity vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. avg. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean identity',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+    # mean (mapping) Q score
+    # mean Q score vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. avg. Q score",title=results.plot_title,x_cutoffs=[90],x_cutoff_colors=['gray'],y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean mapping Q score',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # mean Q score vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. avg. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean mapping Q score',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # mean Q score vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. avg. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean mapping Q score',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+    
 else:
     # sequential violin/swarm plots for each property
     # simplify by iterating through for loop
     # no need for cutoff array this time
-    cramino_plot_worksheet_names=['Number of alignments plot','Percent of total reads plot','Yield plot','Mean coverage plot','Yield over 25 kb plot','N50 plot','N75 plot','Median length plot','Mean length plot','Median identity plot','Mean identity plot','Median mapping Q score plot','Mean mapping Q score plot']
+    cramino_plot_worksheet_names=['Number of alignments plot','Percent of total reads plot','Yield plot','Mean coverage plot','Yield over 25 kb plot','N50 plot','N50 (kb) plot','N75 plot','Median length plot','Mean length plot','Median identity plot','Mean identity plot','Median mapping Q score plot','Mean mapping Q score plot']
     for idx, i in enumerate(cramino_summary_statistics_property_names):
         # include group variable if necessary
         if grouped is False:
+            group_variable=None
             make_violinswarmplot_worksheet(cramino_extract,i,None,legend_patches,results.colors,results.strip_plot,workbook,cramino_plot_worksheet_names[idx],None,None,results.plot_title)
         elif grouped is True:
             if results.show_group_count is True:
+                group_variable='Group and count'
                 make_violinswarmplot_worksheet(cramino_extract,i,cramino_extract['Group and count'],legend_patches,results.colors,results.strip_plot,workbook,cramino_plot_worksheet_names[idx],None,None,results.plot_title)
             else:
+                group_variable='Group'
                 make_violinswarmplot_worksheet(cramino_extract,i,cramino_extract['Group'],legend_patches,results.colors,results.strip_plot,workbook,cramino_plot_worksheet_names[idx],None,None,results.plot_title)
+    # add scatterplots to match what Melissa suggested in RUSH cohort analysis
+    # median identity
+    # median identity vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. med. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median identity',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # median identity vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. med. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median identity',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # median identity vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. med. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median identity',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+    # median (mapping) Q score
+    # median Q score vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. med. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median mapping Q score',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # median Q score vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. med. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median mapping Q score',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # median Q score vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. med. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Median mapping Q score',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+    # mean identity
+    # mean identity vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. avg. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean identity',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # mean identity vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. avg. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean identity',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # mean identity vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. avg. idy",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean identity',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+    # mean (mapping) Q score
+    # mean Q score vs. yield (Gb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Yield (Gb) vs. avg. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean mapping Q score',x_variable='Yield (Gb)',prop_point_size=False,size_column=None)            
+    # mean Q score vs. read N50 (kb)
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"N50 (kb) vs. avg. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean mapping Q score',x_variable='N50 (kb)',prop_point_size=False,size_column=None)            
+    # mean Q score vs. percent of total reads
+    make_scatterplot_worksheet(cramino_extract,group_variable,legend_patches,user_palette,strip_plot_set,workbook,"Pct. total vs. avg. Q score",title=results.plot_title,x_cutoffs=None,x_cutoff_colors=None,y_cutoffs=None,y_cutoff_colors=None,show_run_colors=True,show_reg_line=False,y_variable='Mean mapping Q score',x_variable='Percent of total reads',prop_point_size=False,size_column=None)            
+        
 # save workbook when done
 workbook.save(results.output_file)
 
