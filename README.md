@@ -34,7 +34,7 @@ optional arguments:
 ```
 Output fields of the parser-generated summary table include the following:
 
-Filename, Number of alignments, Percent of total reads, Yield (Gb), Mean Coverage, Yield (Gb) [>25kb], N50, N75, Median length, Mean length, Median identity, Mean identity, Median mapping Q score, Mean mapping Q score
+Filename, Number of alignments, Percent of total reads, Yield (Gb), Mean Coverage, Yield (Gb) [>25kb], N50, N75, Median length, Mean length, Median identity, Mean identity, Median identity Q score, Mean identity Q score
 
 ```
 usage: CARDlongread_cramino_dashboard.py [-h] [-input INPUT_FILE [INPUT_FILE ...]] [-names [NAMES ...]] [-output OUTPUT_FILE] [-plot_title PLOT_TITLE] [--plot_cutoff | --no-plot_cutoff] [-run_cutoff RUN_CUTOFF]
