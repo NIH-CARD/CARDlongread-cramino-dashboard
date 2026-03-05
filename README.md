@@ -139,6 +139,6 @@ Below are sample grouped violinplots with overlayed strip plots from the custom 
 
 The most recent updates have added scatterplots to visualize the relationships between mean/median identity or identity Q score and yield (Gb), N50 (kb), and percent of total reads (mapping), as shown for mean identity Q score below. Note that the axes are not set with x and y limits of 0, but rather based on the minimum x and y values in the displayed data. These visualizations are useful for identifying potential causes of poor assembly quality when assembling reads corresponding to these visualized read alignments.
 
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/62234aee-881f-4f50-8014-996a153076df" />
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/71fc14ae-1bf5-49df-87ea-bc685b379070" />
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/f74537f9-1e91-4020-b7c6-be26abd2a33d" />
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/0fdbb749-e234-4cf3-ab70-6e1811ef1d32" />
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/aecdc215-d235-49ab-ae44-46fee75840f7" />
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/7176caa5-35c0-4358-a4d0-568f53830f5f" />
