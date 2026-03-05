@@ -43,8 +43,8 @@ def get_fields_from_cramino(input_cramino_df,bam_type):
         mean_length : float = 0
         median_identity : float = 0    
         mean_identity : float = 0     
-        median_mapping_q_score : float = 0
-        mean_mapping_q_score : float = 0
+        median_identity_q_score : float = 0
+        mean_identity_q_score : float = 0
     # get values from each consecutive field in the cramino output dataframe
     # what to do if data frame is empty
     if (len(input_cramino_df[1])==1):
@@ -60,8 +60,8 @@ def get_fields_from_cramino(input_cramino_df,bam_type):
         fields_from_cramino.mean_length = 0
         fields_from_cramino.median_identity = 0
         fields_from_cramino.mean_identity = 0
-        fields_from_cramino.median_mapping_q_score = 0
-        fields_from_cramino.mean_mapping_q_score = 0
+        fields_from_cramino.median_identity_q_score = 0
+        fields_from_cramino.mean_identity_q_score = 0
     # as shown above, these are just sequential values (row by row) in the table
     else:
         fields_from_cramino.file_name = input_cramino_df[1][0]
@@ -77,14 +77,14 @@ def get_fields_from_cramino(input_cramino_df,bam_type):
         if (bam_type == "mapped_bam"):
             fields_from_cramino.median_identity = input_cramino_df[1][10]
             fields_from_cramino.mean_identity = input_cramino_df[1][11]
-            fields_from_cramino.median_mapping_q_score = round(-10*np.log10((100-float(fields_from_cramino.median_identity))/100),2)
-            fields_from_cramino.mean_mapping_q_score = round(-10*np.log10((100-float(fields_from_cramino.mean_identity))/100),2)
+            fields_from_cramino.median_identity_q_score = round(-10*np.log10((100-float(fields_from_cramino.median_identity))/100),2)
+            fields_from_cramino.mean_identity_q_score = round(-10*np.log10((100-float(fields_from_cramino.mean_identity))/100),2)
         elif (bam_type == "unmapped_bam"):
             # none of the below provided for cramino run with --ubam option (apparently identity information not provided)
             fields_from_cramino.median_identity = 0
             fields_from_cramino.mean_identity = 0
-            fields_from_cramino.median_mapping_q_score = 0
-            fields_from_cramino.mean_mapping_q_score = 0
+            fields_from_cramino.median_identity_q_score = 0
+            fields_from_cramino.mean_identity_q_score = 0
     return fields_from_cramino
 # load json file list
 # user input
@@ -106,7 +106,7 @@ else:
 # set indices
 cramino_report_df_indices = [np.arange(0,len(files))]
 # set column names
-cramino_report_column_names = ['Filename','Number of alignments','Percent of total reads','Yield (Gb)','Mean Coverage','Yield (Gb) [>25kb]','N50','N75','Median length','Mean length','Median identity','Mean identity','Median mapping Q score','Mean mapping Q score']
+cramino_report_column_names = ['Filename','Number of alignments','Percent of total reads','Yield (Gb)','Mean Coverage','Yield (Gb) [>25kb]','N50','N75','Median length','Mean length','Median identity','Mean identity','Median identity Q score','Mean identity Q score']
 # initialize data frame with said column names and filenames as indexes
 cramino_report_df = pd.DataFrame(index=cramino_report_df_indices,columns=cramino_report_column_names)
 # main loop to process files
@@ -121,7 +121,7 @@ for idx, x in enumerate(files):
         data=pd.read_csv(f,sep='\t',header=None)
         # get important information
         current_data_fields = get_fields_from_cramino(data,args.bam_type)
-        cramino_report_df.loc[idx] = [current_data_fields.file_name,current_data_fields.number_of_alignments,current_data_fields.percent_of_total_reads,current_data_fields.yield_gb,current_data_fields.mean_coverage,current_data_fields.yield_gb_over_25kb,current_data_fields.n50,current_data_fields.n75,current_data_fields.median_length,current_data_fields.mean_length,current_data_fields.median_identity,current_data_fields.mean_identity,current_data_fields.median_mapping_q_score,current_data_fields.mean_mapping_q_score]
+        cramino_report_df.loc[idx] = [current_data_fields.file_name,current_data_fields.number_of_alignments,current_data_fields.percent_of_total_reads,current_data_fields.yield_gb,current_data_fields.mean_coverage,current_data_fields.yield_gb_over_25kb,current_data_fields.n50,current_data_fields.n75,current_data_fields.median_length,current_data_fields.mean_length,current_data_fields.median_identity,current_data_fields.mean_identity,current_data_fields.median_identity_q_score,current_data_fields.mean_identity_q_score]
     except ValueError as e:
         print(e)
         continue
