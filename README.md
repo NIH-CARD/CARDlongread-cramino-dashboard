@@ -79,14 +79,14 @@ python CARDlongread_cramino_dashboard.py -input example_cramino_summary.tsv -out
 ```
 Example alignment QC visualizations from tutorial summary spreadsheet:
 
-Mean reference (GRCh38) coverage violinplot with embedded boxplot and overlayed swarmplot (30x cutoff marked in red):  
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/8101294d-28b3-4393-92e7-c5ce5aca7a4b" />  
+Mean reference (GRCh38) coverage violinplot with embedded boxplot and overlayed swarmplot (30x cutoff marked in red):
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/ca67ebed-4ec8-4012-bb3a-6e501df76329" />
 
-Alignment N50 violinplot with embedded boxplot and overlayed swarmplot:  
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/4c8a85ee-8fdf-4a17-a43f-980786f14bba" />  
+Alignment N50 (kb) violinplot with embedded boxplot and overlayed swarmplot:
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/83c92613-5976-4cc5-ab19-a652e677c972" />
 
-Median identity Q score (quality score; -10 log (error rate)) violinplot with embedded boxplot and overlayed swarmplot:  
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/af8c88ac-e4fb-4edb-99c1-743cd852de5f" />
+Median Phred-scaled identity Q score (quality score; -10 log (error rate)) violinplot with embedded boxplot and overlayed swarmplot: 
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/7201b10d-b309-4484-978f-b8dd77512b57" />
 
 ## Comparing QC metrics across groups
 As we described in the [raw QC report parser and dashboard repository](https://github.com/molleraj/CARDlongread-report-parser), it is often advantageous to compare cramino QC metrics across different groups of mapped and unmapped BAMs. We thus implemented group comparison functionality available through the ```-input [INPUT_FILE ...]```, ```-names [NAMES ...]```, and/or ```-colors [COLORS ...]``` command line options. These options take a list of files along with corresponding names and colors to be applied to each input file, in the order given for the ```-input``` option. We have provided an additional tutorial below demonstrating group comparison with custom coloring and labeling for 20 sequencing runs randomly selected from each of five different cohorts. Cohorts are colored and labeled based on sample type (blood in red, brain in blue, colors from tableau palette). Cohorts are set in order to corresponding brain/blood colors with ```-colors```, while the legend is set to blood/brain and red/blue with ```-legend_colors``` and ```-legend_labels```, respectively. We also provide a command to generate a companion dashboard based on the same cohorts with default coloring. Paths provided in cramino output list files are paths to corresponding cramino outputs on the NIH Biowulf HPC cluster. Input and output files for the group comparison tutorial are provided in the provided ```group_comparison``` folder.
