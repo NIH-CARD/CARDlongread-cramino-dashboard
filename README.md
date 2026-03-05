@@ -1,5 +1,5 @@
 # NIA CARD Long Read Cramino QC Parser and Dashboard Generator
-We often collect read mapping statistics for both small and large cohorts using the quality assessment tool cramino (https://github.com/wdecoster/cramino) in the NanoPack suite (https://github.com/wdecoster/nanopack). However, NanoPack lacks a tool that is useful for examining read mapping statistics of large numbers of samples, or between groups of samples. NanoPlot, for example, is best intended for comparing individual samples against each other. We thus developed a method to parse large numbers of cramino outputs at once, calculate descriptive statistics for each cramino measure (e.g., yield over 25 kb, N50), and generate swarm/violinplots of each property based on all samples. We recently added functions to generate scatterplots visualizing relationships between mapping identity or mapping Q score and metrics including yield, (mapping) N50, and percent of total reads (mapping) based on suggestions from fellow CARD ANG/DTI bioinformatician [Melissa Meredith](https://github.com/meredith705). The two scripts below are used in sequence to parse cramino QC output in bulk and generate an analytics dashboard from the bulk summary.
+We often collect read mapping statistics for both small and large cohorts using the quality assessment tool cramino (https://github.com/wdecoster/cramino) in the NanoPack suite (https://github.com/wdecoster/nanopack). However, NanoPack lacks a tool that is useful for examining read mapping statistics of large numbers of samples, or between groups of samples. NanoPlot, for example, is best intended for comparing individual samples against each other. We thus developed a method to parse large numbers of cramino outputs at once, calculate descriptive statistics for each cramino measure (e.g., yield over 25 kb, N50), and generate swarm/violinplots of each property based on all samples. We recently added functions to generate scatterplots visualizing relationships between mapping identity (gap-based identity calculated by cramino) or corresponding Phred-scaled identity Q score and metrics including yield, (mapping) N50, and percent of total reads (mapping) based on suggestions from fellow CARD ANG/DTI bioinformatician [Melissa Meredith](https://github.com/meredith705). The two scripts below are used in sequence to parse cramino QC output in bulk and generate an analytics dashboard from the bulk summary.
 ## Dependencies
 The Python scripts were tested and developed with the following dependency modules (and respective versions where applicable):
 
@@ -85,7 +85,7 @@ Mean reference (GRCh38) coverage violinplot with embedded boxplot and overlayed 
 Alignment N50 violinplot with embedded boxplot and overlayed swarmplot:  
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/4c8a85ee-8fdf-4a17-a43f-980786f14bba" />  
 
-Median mapping Q score (quality score; -10 log (error rate)) violinplot with embedded boxplot and overlayed swarmplot:  
+Median identity Q score (quality score; -10 log (error rate)) violinplot with embedded boxplot and overlayed swarmplot:  
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/af8c88ac-e4fb-4edb-99c1-743cd852de5f" />
 
 ## Comparing QC metrics across groups
@@ -134,7 +134,7 @@ Below are sample grouped violinplots with overlayed strip plots from the custom 
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/30eb1ec2-bf6f-4d65-add7-4367cba17e6f" />
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/7b5fea32-242f-4534-86e2-0d5d02c46874" />
 
-The most recent updates have added scatterplots to visualize the relationships between mean/median identity or Q score and yield (Gb), N50 (kb), and percent of total reads (mapping), as shown for mean Q score below. Note that the axes are not set with x and y limits of 0, but rather based on the minimum x and y values in the displayed data. These visualizations are useful for identifying potential causes of poor assembly quality when assembling reads corresponding to these visualized read alignments.
+The most recent updates have added scatterplots to visualize the relationships between mean/median identity or identity Q score and yield (Gb), N50 (kb), and percent of total reads (mapping), as shown for mean Q score below. Note that the axes are not set with x and y limits of 0, but rather based on the minimum x and y values in the displayed data. These visualizations are useful for identifying potential causes of poor assembly quality when assembling reads corresponding to these visualized read alignments.
 
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/62234aee-881f-4f50-8014-996a153076df" />
 <img width="720" alt="image" src="https://github.com/user-attachments/assets/71fc14ae-1bf5-49df-87ea-bc685b379070" />
