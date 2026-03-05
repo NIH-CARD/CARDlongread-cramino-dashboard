@@ -1,4 +1,4 @@
-Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median mapping Q score	Mean mapping Q score
+Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median identity Q score	Mean identity Q score
 Chile_404.sorted_meth.bam	7876502	77.57	147.44	47.56	65.65	23260	16395	16935.00	18718	99.47	97.80	22.76	16.58
 Chile_406.sorted_meth.bam	7979478	79.30	136.99	44.19	59.50	22359	14412	14176.00	17168	99.49	97.93	22.92	16.84
 Chile_509.sorted_meth.bam	9074650	82.91	120.50	38.87	13.97	16218	13258	13708.00	13278	99.43	97.98	22.44	16.95

@@ -1,4 +1,4 @@
-Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median mapping Q score	Mean mapping Q score
+Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median identity Q score	Mean identity Q score
 NBB_SINAI-159_FTX_PBA58349.second_attempt.sorted_meth.bam	5484723	71.90	113.09	36.48	77.02	31472	21896	19330.00	20619	99.42	97.65	22.37	16.29
 NBB_MIA-046_FTX_PBA58311.second_attempt.sorted_meth.bam	11994519	81.31	114.17	36.83	26.32	16020	10740	7830.00	9518	99.39	97.99	22.15	16.97
 NBB_UMNB-110_FTX_PAY16741.second_attempt.sorted_meth.bam	7466183	73.74	113.87	36.73	38.54	21081	15270	14875.00	15251	99.39	97.45	22.15	15.93

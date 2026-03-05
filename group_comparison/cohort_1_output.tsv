@@ -1,4 +1,4 @@
-Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median mapping Q score	Mean mapping Q score
+Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median identity Q score	Mean identity Q score
 PAQ72413.pod5.5mCG_5hmCG.mapped.sorted.bam	8816954	77.22	67.73	21.85	23.94	19088	10036	3301.00	7682	98.56	95.68	18.42	13.65
 PAU27227.pod5.5mCG_5hmCG.mapped.sorted.bam	5356899	78.94	79.89	25.77	55.27	31705	22167	9039.00	14912	98.54	95.92	18.36	13.89
 PAQ74437.pod5.5mCG_5hmCG.mapped.sorted.bam	7180347	80.99	69.89	22.55	30.30	22476	12160	4982.00	9734	98.52	95.84	18.3	13.81

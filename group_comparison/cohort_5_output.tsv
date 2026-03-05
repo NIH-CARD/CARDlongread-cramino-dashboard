@@ -1,4 +1,4 @@
-Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median mapping Q score	Mean mapping Q score
+Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median identity Q score	Mean identity Q score
 UKBEC_010_FTX_PBC19063.sorted_meth.bam	4445931	77.52	69.40	22.39	29.77	22760	15709	14442.00	15610	99.45	97.68	22.6	16.35
 UKBEC_089_FPS_PAS39769.sorted_meth.bam	2114607	75.33	33.32	10.75	17.68	25803	18199	14664.00	15755	99.20	96.54	20.97	14.61
 UKBEC_056_BG_PAY67359.sorted_meth.bam	2326413	72.58	36.60	11.81	18.20	24918	16595	14259.00	15731	99.49	97.87	22.92	16.72

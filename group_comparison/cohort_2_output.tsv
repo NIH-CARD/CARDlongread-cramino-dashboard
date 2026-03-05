@@ -1,4 +1,4 @@
-Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median mapping Q score	Mean mapping Q score
+Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median identity Q score	Mean identity Q score
 PPMI_4125.sorted_meth.bam	21805797	75.20	358.89	115.78	215.46	29318	18112	12528.00	16458	98.64	95.43	18.66	13.4
 PPMI_3191.sorted_meth.bam	9193197	78.16	105.72	34.10	20.84	15314	10760	10311.00	11499	99.18	96.47	20.86	14.52
 PPMI_3752.sorted_meth.bam	8127302	76.84	124.70	40.23	66.35	26459	15936	11672.00	15343	99.34	96.74	21.8	14.87

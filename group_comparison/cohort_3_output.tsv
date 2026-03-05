@@ -1,4 +1,4 @@
-Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median mapping Q score	Mean mapping Q score
+Filename	Number of alignments	Percent of total reads	Yield (Gb)	Mean Coverage	Yield (Gb) [>25kb]	N50	N75	Median length	Mean length	Median identity	Mean identity	Median identity Q score	Mean identity Q score
 RUSH_123_FTX_PAW74757.sorted_meth.bam	6405152	82.81	107.24	34.59	52.05	24641	17544	16278.00	16742	99.19	97.35	20.92	15.77
 RUSH_054_FTX_PAW63545.sorted_meth.bam	5102439	82.50	85.29	27.51	42.96	25092	18011	16373.00	16714	99.03	96.77	20.13	14.91
 RUSH_096_FTX_PAO18311.sorted_meth.bam	1125046	80.09	11.66	3.76	3.77	19631	13032	9346.00	10366	98.76	95.75	19.07	13.72
